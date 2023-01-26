@@ -1,14 +1,8 @@
-
 const token = sessionStorage.getItem('token')
 const username = sessionStorage.getItem('username')
-if (token == null) {
-    window.location.href = 'login.html'
-}
-const id = getUserId()
-console.log(getUserGrades())
-
-function getUserInfo(){
-    fetch('https://aplikace.skolaonline.cz/SOLWebApi/api/v1/UzivatelInfo', {
+let info, id, subjects = {}, grades = []
+let isLoaded = false
+fetch('https://aplikace.skolaonline.cz/SOLWebApi/api/v1/UzivatelInfo', {
     method: 'POST',
     headers: {
        'base64': '1',
@@ -18,37 +12,12 @@ function getUserInfo(){
     },
     body: '"'+username+'"'
     })
-    .then(response => response.json())
-    .then(data => {
-        return data.Data
-    })
-}
+.then(response => response.json())
+.then(data => {
+    info = data.Data
+    id = data.Data.OSOBA_ID
 
-function getUserGrades() {
-    let grades = []
-    const subjects = getUserSubjects()
-    fetch(`https://aplikace.skolaonline.cz/SOLWebApi/api/v1/UzivatelInfo?studentID=${id}`,{
-        headers : {
-            'base64':'1',
-            'Authorization':'Basic ' + token
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        data.Data.HODNOCENI.forEach(grade => {
-            grades.push({
-                subject: subjects[grade.PREDMET],
-                grade: grade.VYSLEDEK,
-                weight: grade.DRUH_HODNOCENI_ID,
-                name : grade.NAZEV
-            })
-        })
-        return grades
-    })
-}
 
-function getUserSubjects() {
-    let subjects = {}
     fetch('https://aplikace.skolaonline.cz/SOLWebApi/api/v1/Predmety',{
         headers : {
             'base64':'1',
@@ -57,16 +26,32 @@ function getUserSubjects() {
     })
     .then(response => response.json())
     .then(data => {
-        data.Data.forEach(subject => {
+        data['Data'].forEach(subject => {
             const name = subject.NAZEV
-            const id = subject.PREDMET_ID
-            subjects.push({id:name})
+            const subject_id = subject.PREDMET_ID
+            const short = subject.ZKRATKA
+            subjects[subject_id] = {name:name,short:short,grades:[]}
         })
-        return subjects
-    })
-}
 
-function getUserId(){
-    const userInfo = getUserInfo()
-    return userInfo.OSOBA_ID
-}
+        fetch(`https://aplikace.skolaonline.cz/SOLWebApi/api/v1/UzivatelInfo?studentID=${id}`,{
+            headers : {
+                'base64':'1',
+                'Authorization':'Basic ' + token
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            data.Data.HODNOCENI.forEach(grade => {
+                grade.PREDMET_ID.push({
+                    grade: grade.VYSLEDEK,
+                    weight: grade.DRUH_HODNOCENI_ID,
+                    name : grade.NAZEV
+                })
+            })
+            console.log(grades)
+        })
+    })
+})
+
+
+
