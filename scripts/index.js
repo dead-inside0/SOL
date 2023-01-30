@@ -3,46 +3,47 @@ const username = sessionStorage.getItem("username");
 if (token == null || username == null) {
   window.location.href = "login.html";
 }
-let info,
-  id,
-  subjects
+let info, id, subjects, grades;
 
-init_data()
-.then((id,subs,info) => { 
-  check_for_init()
-})
-
-
+init_data().then(() => load_page());
 
 async function init_data() {
-  let id_res = await fetch_id()
-  id = id_res;
-  //console.log(id);
-  
-  let subjects_res = await fetch_subjects()
-  subjects = subjects_res;
-  //console.log(subjects);
-
-  let user_info_res = await fetch_user_info()
-  info = user_info_res;
-  //console.log(info);
-  await check_for_init()
+  id = await fetch_id();
+  subjects = await fetch_subjects();
+  info = await fetch_user_info();
+  grades = await fetch_grades();
 }
 
-function check_for_init() {
-  if (id != null && subjects != null && info != null) {
-    const table = document.getElementById("table");
-    subjects["D167843"]["grades"].forEach((grade) => {
-      const table_length = table.rows.length;
-      const row = table.insertRow(table_length += 1);
-      let cell1 = row.insertCell(0);
-      let cell2 = row.insertCell(1);
-      cell1.innerHTML = grade.Name;
-      cell2.innerHTML = grade.Grade;
-    })
-  } else {
-    window.setTimeout(checkFlag, 100);
+this.addEventListener("keypress", (event) => {
+  if (event.keyCode == 13) {
+    refresh_grades();
   }
+});
+
+function refresh_grades() {}
+
+function load_page() {
+  console.log(subjects);
+  let table = document.getElementById("grades");
+  grades.forEach((grade) => console.log(grade.Name));
+  let grades_from_subject = get_grades_from_subject("");
+  grades.forEach((grade) => {
+    let row = table.insertRow();
+    let name_cell = row.insertCell(0);
+    let grade_cell = row.insertCell(1);
+    name_cell.innerHTML = grade.Name;
+    grade_cell.outerHTML = `<input type="text" id="${grade.ID}" placeholder="${grade.Grade}"></td>`;
+  });
+}
+
+function get_grades_from_subject(subject_id) {
+  grades_from_subject = [];
+  grades.forEach((grade) => {
+    if (grade.Subject == subject_id) {
+      grades_from_subject.push(grade);
+    }
+  });
+  return grades_from_subject;
 }
 
 async function fetch_id() {
@@ -83,7 +84,6 @@ async function fetch_user_info() {
   return res;
 }
 
-
 async function fetch_subjects() {
   let res = await fetch(
     "https://aplikace.skolaonline.cz/SOLWebApi/api/v1/Predmety",
@@ -101,19 +101,12 @@ async function fetch_subjects() {
     const subject_id = subject.PREDMET_ID;
     const short = subject.ZKRATKA;
     let sub_grades;
-    fetch_subject_grades(subject_id)
-      .then((res) => {
-        sub_grades = res;
-      })
-      .then(() => {
-        subs[subject_id] = { name: name, short: short, grades: sub_grades };
-      });
+    subs[subject_id] = { Name: name, Short: short };
   });
   return subs;
 }
 
-
-async function fetch_subject_grades(subject_id) {
+async function fetch_grades() {
   let res = await fetch(
     `https://aplikace.skolaonline.cz/SOLWebApi/api/v1/VypisHodnoceniStudent?studentId=${id}`,
     {
@@ -124,16 +117,16 @@ async function fetch_subject_grades(subject_id) {
     }
   );
   res = await res.json();
-  const subject_grades = [];
+  let grades = [];
   res.Data.Hodnoceni.forEach((grade) => {
-    if (grade.PREDMET_ID == subject_id) {
-      subject_grades.push({
-        Name: grade.NAZEV,
-        Grade: grade.VYSLEDEK,
-        Weight: grade.DRUH_HODNOCENI,
-        Date: grade.DATUM,
-      });
-    }
+    grades.push({
+      Name: grade.NAZEV,
+      Grade: grade.VYSLEDEK,
+      Weight: grade.DRUH_HODNOCENI,
+      Date: grade.DATUM,
+      Subject: grade.PREDMET_ID,
+      Id: grade.UDALOST_ID,
+    });
   });
-  return subject_grades;
+  return grades;
 }
