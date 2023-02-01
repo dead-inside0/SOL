@@ -1,8 +1,12 @@
-.grades {
-  display: flex;
-  justify-content: center;
+.grades_div {
+    width: 500px;
+    float: left;
 }
-.grades th {
+
+.info_div {
+    width: 500px;
+    float: left;
+}
+.grades_table th {
   color: red;
-  position: sticky;
 }
