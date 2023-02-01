@@ -43,6 +43,15 @@ function refresh_grades() {
         const id = row.childNodes[1].id
         change_grade_by_id(id, input)
     }
+    else {
+      let placeholder = row.childNodes[1].attributes.placeholder
+      placeholder = placeholder.value
+      if(placeholder != 'Not assigned') {
+        placeholder = parseInt(placeholder)
+        const id = row.childNodes[1].id
+        change_grade_by_id(id, placeholder)
+      }
+    }
   }
   let average = get_total_average();
   let total_average_text = document.getElementById("total_average");
