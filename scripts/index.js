@@ -18,6 +18,15 @@ date = date.toISOString();
 
 init_data().then(() => load_page());
 
+refresh_on_timeout()
+
+function refresh_on_timeout() {
+  setTimeout(() => {
+    refresh_grades();
+    refresh_on_timeout();
+  }, 1000);
+}
+
 async function init_data() {
   id = await fetch_id();
   subjects = await fetch_subjects();
@@ -37,7 +46,6 @@ function refresh_grades() {
         continue
     }
     let input = row.childNodes[1].value
-    console.log(input)
     if(input != '') {
         input = parseInt(input)
         const id = row.childNodes[1].id
@@ -78,9 +86,9 @@ function load_page() {
     let grade_cell = row.insertCell(1);
     name_cell.innerHTML = grade.Name;
     if (grade.Grade == null) {
-      grade_cell.outerHTML = `<input type="text" id="${grade.Id}" placeholder="Not assigned"></td>`;
+      grade_cell.outerHTML = `<input type="text" id="${grade.Id}" class="grade_input" placeholder="Not assigned"></td>`;
     } else {
-      grade_cell.outerHTML = `<input type="text" id="${grade.Id}" placeholder="${grade.Grade}"></td>`;
+      grade_cell.outerHTML = `<input type="text" id="${grade.Id}" class="grade_input" placeholder="${grade.Grade}"></td>`;
     }
   });
   let average = get_total_average();
@@ -97,7 +105,6 @@ function get_grades_from_subject(subject_id) {
       add_grade_to_category(grade.Grade, grade.Id, grade.Category);
     }
   });
-  console.log(get_total_average());
   return grades_from_subject;
 }
 

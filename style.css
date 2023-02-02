@@ -1,11 +1,17 @@
 .grades_div {
-    width: 500px;
-    float: left;
+  width: 500px;
+  float: left;
+}
+.grade_input {
+  width: 50px;
+}
+.grades_table th {
+  border: 1px solid black;
 }
 
 .info_div {
-    width: 500px;
-    float: left;
+  width: 500px;
+  float: left;
 }
 .grades_table th {
   color: red;
