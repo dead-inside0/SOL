@@ -13,9 +13,9 @@ function Login() {
         if (data.Status.Code == 'OK') {
             sessionStorage.setItem('token', token)
             sessionStorage.setItem('username', username)
-            window.location.href = 'index.html'
+            window.location.href = 'calculator.html'
         } else {
-            alert('Nesprávné přihlašovací údaje')
+            alert('Incorrect username or password.')
         }
     })
 }
