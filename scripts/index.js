@@ -11,12 +11,13 @@ let info,
   grade_info = {},
   date,
   total_average = 0,
-  rounded_total_average;
+  rounded_total_average,
+  current_subject;
 
 date = new Date();
 date = date.toISOString();
 
-init_data().then(() => load_page());
+init_data().then(() => initial_load_page());
 
 refresh_on_timeout()
 
@@ -29,44 +30,39 @@ function refresh_on_timeout() {
 
 async function init_data() {
   id = await fetch_id();
-  subjects = await fetch_subjects();
+  subjects = await get_user_subjects();
   info = await fetch_user_info();
   categories = await fetch_grade_categories();
   grades = await fetch_grades();
 }
 
 function refresh_grades() {
-  const table = document.getElementById('grades')
-  rows = Object.values(table.rows)
-  let counter = 0
-  for(let row in rows) {
-    row = rows[row]
-    if(counter == 0) {
-        counter+=1
-        continue
-    }
-    let input = row.childNodes[1].value
-    if(input != '') {
-        input = parseInt(input)
-        const id = row.childNodes[1].id
-        change_grade_by_id(id, input)
+  const table = $('#grades > tbody');
+  let table_grades = []
+  table.find('tr').each((i,row) => {
+    const value = $(row).find('td:eq(1)').find('input').val()
+    const placeholder = $(row).find('td:eq(1)').find('input').attr('placeholder')
+    const id = $(row).find('td:eq(1)').find('input').attr('id')
+    if(value != '') {
+      change_grade_by_id(id, value)
     }
     else {
-      let placeholder = row.childNodes[1].attributes.placeholder
-      placeholder = placeholder.value
-      if(placeholder != 'Not assigned') {
-        placeholder = parseInt(placeholder)
-        const id = row.childNodes[1].id
-        change_grade_by_id(id, placeholder)
+      console.log( typeof placeholder)
+      if(placeholder == 'Not assigned') {
+        
       }
+      change_grade_by_id(id, placeholder)
     }
-  }
-  let average = get_total_average();
-  let total_average_text = document.getElementById("total_average");
-  total_average_text.innerHTML = `Average: ${average}`;
+  })
+  const average = get_total_average()
+  let total_average_text = $('#total_average');
+  total_average_text.html(`Average: ${average}`)
 }
 
 function change_grade_by_id(id, new_grade) {
+  if(new_grade != 'Not assigned') {
+    new_grade = Number(new_grade);
+  }
   Object.values(grade_info).forEach((category) => {
     category.Grades.forEach((grade) => {
       if (grade.Id == id) {
@@ -77,18 +73,42 @@ function change_grade_by_id(id, new_grade) {
   });
 }
 
+function initial_load_page() {
+  let subject_selector = document.getElementById("subject_selector");
+  console.log(subjects)
+  let counter = 0
+  Object.keys(subjects).forEach((subject) => {
+    let option = document.createElement("option");
+    option.value = subject;
+    if(counter == 0) {
+      option.selected = true;
+    }
+    counter += 1
+    option.innerHTML = subjects[subject].Short;
+    subject_selector.appendChild(option);
+  })
+  current_subject = subject_selector.value;
+  console.log(subject_selector)
+  console.log(current_subject)
+  load_page();
+}
+
+function on_subject_change() {
+  current_subject = document.getElementById('subject_selector').value;
+  load_page()
+}
+
 function load_page() {
-  let table = document.getElementById("grades");
-  let grades_from_subject = get_grades_from_subject("D167843");
+  let table_body = $('#grades > tbody')
+  table_body.empty()
+  let grades_from_subject = get_grades_from_subject(current_subject);
+  console.log(grades_from_subject)
+  console.log(grade_info)
   grades_from_subject.forEach((grade) => {
-    let row = table.insertRow();
-    let name_cell = row.insertCell(0);
-    let grade_cell = row.insertCell(1);
-    name_cell.innerHTML = grade.Name;
-    if (grade.Grade == null) {
-      grade_cell.outerHTML = `<input type="text" id="${grade.Id}" class="grade_input" placeholder="Not assigned"></td>`;
+    if (grade.Grade == null || grade.Grade == NaN) {
+      table_body.append(`<tr><td>${grade.Name}</td><td><input type="text" id="${grade.Id}" class="grade_input" placeholder="Not assigned"></td></tr>`)
     } else {
-      grade_cell.outerHTML = `<input type="text" id="${grade.Id}" class="grade_input" placeholder="${grade.Grade}"></td>`;
+      table_body.append(`<tr><td>${grade.Name}</td><td><input type="text" id="${grade.Id}" class="grade_input" placeholder="${grade.Grade}"></td></tr>`)
     }
   });
   let average = get_total_average();
@@ -125,17 +145,15 @@ function add_grade_to_category(grade, id, category_id) {
 
 function get_total_average() {
   let average = 0;
-  let max_average_percent = 1
+  let max_divisor = 0
   Object.values(grade_info).forEach((category) => {
     get_category_average(Object.keys(grade_info).find(key => grade_info[key] === category))
-    if (typeof category.Average == "number") {
+    if (category.Average != 'Not assigned' && category.Average != null && category.Average != NaN) {
       average += category.Average * category.Weight;
-    }
-    else {
-        max_average_percent -= category.Weight
+      max_divisor += category.Weight
     }
   });
-  average /= max_average_percent;
+  average /= max_divisor
   total_average = average;
   rounded_total_average = Math.round(average);
   return rounded_total_average;
@@ -147,15 +165,34 @@ function get_category_average(category_id) {
   let unassigned_grades = 0;
   grade_info[category_id].Grades.forEach((grade) => {
     counter += 1;
-    if (typeof grade.Grade == "number") {
+    if (grade.Grade != NaN && grade.Grade != null && grade.Grade != 'Not assigned') {
       average += grade.Grade;
     } else {
       unassigned_grades += 1;
     }
   });
-  average /= grade_info[category_id].Grades.length - unassigned_grades;
-  grade_info[category_id].Average = average
-  return average;
+  if(counter == unassigned_grades) {
+    grade_info[category_id].Average = "Not assigned"
+    return "Not assigned"
+  }
+  else {
+    average /= (grade_info[category_id].Grades.length - unassigned_grades);
+    grade_info[category_id].Average = average
+    return average;
+  }
+  
+}
+
+async function get_user_subjects() {
+  subjects = await fetch_subjects()
+  grades = await fetch_grades()
+  let user_subjects = {}
+  grades.forEach((grade) => {
+    if(!Object.keys(user_subjects).includes(grade.Subject)) {
+      user_subjects[grade.Subject] = subjects[grade.Subject]
+    }
+  })
+  return user_subjects
 }
 
 async function fetch_id() {
@@ -236,14 +273,6 @@ async function fetch_subjects() {
   return subs;
 }
 
-function check_for_number(grade) {
-  if (grade == null) {
-    return null;
-  } else {
-    return Number(grade);
-  }
-}
-
 async function fetch_grades() {
   let res = await fetch(
     `https://aplikace.skolaonline.cz/SOLWebApi/api/v1/VypisHodnoceniStudent?studentId=${id}&datumDo=${date}`,
@@ -267,7 +296,7 @@ async function fetch_grades() {
     });
   });
   await grades.forEach((grade) => {
-    if (grade.Grade == null) {
+    if (grade.Grade == null || grade.Grade.startsWith('/') || Number(grade.Grade) == NaN) {
       grade.Grade = null;
     } else {
       grade.Grade = Number(grade.Grade);
