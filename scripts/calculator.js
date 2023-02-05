@@ -12,7 +12,8 @@ let info,
   date,
   total_average = 0,
   rounded_total_average,
-  current_subject;
+  current_subject,
+  custom_id_counter = 0;
 
 date = new Date();
 date = date.toISOString();
@@ -47,9 +48,6 @@ function refresh_grades() {
       change_grade_by_id(id, value)
     }
     else {
-      if(placeholder == 'Not assigned') {
-        
-      }
       change_grade_by_id(id, placeholder)
     }
   })
@@ -73,6 +71,7 @@ function change_grade_by_id(id, new_grade) {
 }
 
 function initial_load_page() {
+  $('html').hide()
   let subject_selector = document.getElementById("subject_selector");
   let counter = 0
   Object.keys(subjects).forEach((subject) => {
@@ -87,6 +86,7 @@ function initial_load_page() {
   })
   current_subject = subject_selector.value;
   load_page();
+  $('html').show()
 }
 
 function refresh_subject() {
@@ -98,14 +98,15 @@ function refresh_subject() {
 }
 
 function load_page() {
-  let table_body = $('#grades > tbody')
-  table_body.empty()
+  $('#grades > tbody').empty()
+  $('#error_message').hide()
   let grades_from_subject = get_grades_from_subject(current_subject);
   grades_from_subject.forEach((grade) => {
+    let table_body = $("#grades > tbody")
     if (grade.Grade == null || grade.Grade == NaN) {
-      table_body.append(`<tr><td>${grade.Name}</td><td><input type="text" id="${grade.Id}" class="grade_input" placeholder="Not assigned"></td></tr>`)
+      table_body.append(`<tr><td class="grade_name">${grade.Name}</td><td><input type="number" min="0" max="100" id="${grade.Id}" class="grade_input" placeholder="Not assigned"></td></tr>`)
     } else {
-      table_body.append(`<tr><td>${grade.Name}</td><td><input type="text" id="${grade.Id}" class="grade_input" placeholder="${grade.Grade}"></td></tr>`)
+      table_body.append(`<tr><td class="grade_name">${grade.Name}</td><td><input type="number" min="0" max="100" id="${grade.Id}" class="grade_input" placeholder="${grade.Grade}"></td></tr>`)
     }
   });
   let average = get_total_average();
@@ -138,6 +139,37 @@ function add_grade_to_category(grade, id, category_id) {
     Id: id,
   });
   grade_info[category_id].Average = get_category_average(category_id);
+}
+
+function create_new_grade() {
+  let name = $('#new_grade_name').val();
+  let grade = $('#new_grade_value').val();
+  let weight = $('#new_grade_weight').val();
+  if(grade < 0 || grade > 100) {
+    $('#error_message').show()
+    $('#error_message').html('Grade must be between 0 and 100')
+    return
+  }
+  if(weight < 0 || weight > 100) {
+    $('#error_message').show()
+    $('#error_message').html('Weight must be between 0 and 100')
+    return
+  }
+  if(name == '') {
+    name = `Grade ${custom_id_counter + 1}`
+  }
+  grade = Number(grade)
+  weight = Number(weight)
+  $('#error_message').hide()
+  weight = weight / 100
+  for(let category in grade_info) {
+    if(category.Weight = weight) {
+      grade_info[category].Grades.push({Grade: grade, Id: `C${custom_id_counter}`})
+      custom_id_counter += 1
+    }
+  }
+  $('#grades > tbody').append(`<tr><td class="grade_name">${name}</td><td><input type="number" min="0" max="100" id="C${custom_id_counter}" class="grade_input" placeholder="${grade}"></td></tr>`)
+  refresh_grades()
 }
 
 function get_total_average() {

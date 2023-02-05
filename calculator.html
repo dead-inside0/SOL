@@ -23,7 +23,14 @@
     </div>
     <div class="info_div">
       <p id="total_average"></p><br>
-      <select id="subject_selector"></select>
+      <select id="subject_selector"></select><br>
+      <form id="new_grade_form">
+        <input id="new_grade_name" type="text" placeholder="Grade name"><br>
+        <input id="new_grade_value" type="number"step="1"placeholder="Grade" required><br>
+        <input id="new_grade_weight" type="number"step="1"placeholder="Grade weight" required><br>
+        <p id="error_message" class="error message"></p><br>
+        <button type="button" onclick="create_new_grade()">Add grade</button>
+      </form>
     </div>
   </body>
 </html>
