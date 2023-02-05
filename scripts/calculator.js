@@ -24,6 +24,7 @@ refresh_on_timeout()
 function refresh_on_timeout() {
   setTimeout(() => {
     refresh_grades();
+    refresh_subject();
     refresh_on_timeout();
   }, 1000);
 }
@@ -38,7 +39,6 @@ async function init_data() {
 
 function refresh_grades() {
   const table = $('#grades > tbody');
-  let table_grades = []
   table.find('tr').each((i,row) => {
     const value = $(row).find('td:eq(1)').find('input').val()
     const placeholder = $(row).find('td:eq(1)').find('input').attr('placeholder')
@@ -47,7 +47,6 @@ function refresh_grades() {
       change_grade_by_id(id, value)
     }
     else {
-      console.log( typeof placeholder)
       if(placeholder == 'Not assigned') {
         
       }
@@ -75,7 +74,6 @@ function change_grade_by_id(id, new_grade) {
 
 function initial_load_page() {
   let subject_selector = document.getElementById("subject_selector");
-  console.log(subjects)
   let counter = 0
   Object.keys(subjects).forEach((subject) => {
     let option = document.createElement("option");
@@ -88,22 +86,21 @@ function initial_load_page() {
     subject_selector.appendChild(option);
   })
   current_subject = subject_selector.value;
-  console.log(subject_selector)
-  console.log(current_subject)
   load_page();
 }
 
-function on_subject_change() {
-  current_subject = document.getElementById('subject_selector').value;
-  load_page()
+function refresh_subject() {
+  const subject_input = document.getElementById('subject_selector').value
+  if(subject_input != current_subject) {
+    current_subject = subject_input
+    load_page()
+  }
 }
 
 function load_page() {
   let table_body = $('#grades > tbody')
   table_body.empty()
   let grades_from_subject = get_grades_from_subject(current_subject);
-  console.log(grades_from_subject)
-  console.log(grade_info)
   grades_from_subject.forEach((grade) => {
     if (grade.Grade == null || grade.Grade == NaN) {
       table_body.append(`<tr><td>${grade.Name}</td><td><input type="text" id="${grade.Id}" class="grade_input" placeholder="Not assigned"></td></tr>`)
