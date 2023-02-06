@@ -165,10 +165,12 @@ function create_new_grade() {
   for(let category in grade_info) {
     if(category.Weight = weight) {
       grade_info[category].Grades.push({Grade: grade, Id: `C${custom_id_counter}`})
+      $('#grades > tbody').append(`<tr><td class="grade_name">${name}</td><td><input type="number" min="0" max="100" id="C${custom_id_counter}" class="grade_input" placeholder="${grade}"></td></tr>`)
       custom_id_counter += 1
+      break
     }
   }
-  $('#grades > tbody').append(`<tr><td class="grade_name">${name}</td><td><input type="number" min="0" max="100" id="C${custom_id_counter}" class="grade_input" placeholder="${grade}"></td></tr>`)
+
   refresh_grades()
 }
 
