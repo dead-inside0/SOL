@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Main</title>
+    <title>skola.studio Grade Calculator</title>
     <link rel="stylesheet" href="style.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
     <script src="scripts/calculator.js"></script>
@@ -16,19 +16,26 @@
           <th>Name</th>
           <th>Grade</th>
         </thead>
-        <tbody>
-
-        </tbody>
+        <tbody></tbody>
       </table>
     </div>
     <div class="info_div">
-      <p id="total_average"></p><br>
-      <select id="subject_selector"></select><br>
+      <p id="total_average"></p>
+      <br />
+      <select id="subject_selector"></select
+      ><br />
       <form id="new_grade_form">
-        <input id="new_grade_name" type="text" placeholder="Grade name"><br>
-        <input id="new_grade_value" type="number"step="1"placeholder="Grade" required><br>
-        <input id="new_grade_weight" type="number"step="1"placeholder="Grade weight" required><br>
-        <p id="error_message" class="error message"></p><br>
+        <input id="new_grade_name" type="text" placeholder="Grade name" /><br />
+        <input
+          id="new_grade_value"
+          type="number"
+          step="1"
+          placeholder="Grade"
+          required
+        /><br />
+        <select id="new_grade_weight"></select>
+        <p id="error_message" class="error message"></p>
+        <br />
         <button type="button" onclick="create_new_grade()">Add grade</button>
       </form>
     </div>

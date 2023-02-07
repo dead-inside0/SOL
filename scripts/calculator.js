@@ -20,7 +20,7 @@ date = date.toISOString();
 
 init_data().then(() => initial_load_page());
 
-refresh_on_timeout()
+refresh_on_timeout();
 
 function refresh_on_timeout() {
   setTimeout(() => {
@@ -39,25 +39,27 @@ async function init_data() {
 }
 
 function refresh_grades() {
-  const table = $('#grades > tbody');
-  table.find('tr').each((i,row) => {
-    const value = $(row).find('td:eq(1)').find('input').val()
-    const placeholder = $(row).find('td:eq(1)').find('input').attr('placeholder')
-    const id = $(row).find('td:eq(1)').find('input').attr('id')
-    if(value != '') {
-      change_grade_by_id(id, value)
+  const table = $("#grades > tbody");
+  table.find("tr").each((i, row) => {
+    const value = $(row).find("td:eq(1)").find("input").val();
+    const placeholder = $(row)
+      .find("td:eq(1)")
+      .find("input")
+      .attr("placeholder");
+    const id = $(row).find("td:eq(1)").find("input").attr("id");
+    if (value != "") {
+      change_grade_by_id(id, value);
+    } else {
+      change_grade_by_id(id, placeholder);
     }
-    else {
-      change_grade_by_id(id, placeholder)
-    }
-  })
-  const average = get_total_average()
-  let total_average_text = $('#total_average');
-  total_average_text.html(`Average: ${average}`)
+  });
+  const average = get_total_average();
+  let total_average_text = $("#total_average");
+  total_average_text.html(`Average: ${average}`);
 }
 
 function change_grade_by_id(id, new_grade) {
-  if(new_grade != 'Not assigned') {
+  if (new_grade != "Not assigned") {
     new_grade = Number(new_grade);
   }
   Object.values(grade_info).forEach((category) => {
@@ -71,47 +73,60 @@ function change_grade_by_id(id, new_grade) {
 }
 
 function initial_load_page() {
-  $('html').hide()
-  let subject_selector = document.getElementById("subject_selector");
-  let counter = 0
+  $("html").hide();
+  let subject_selector = $('#subject_selector');
+  let counter = 0;
   Object.keys(subjects).forEach((subject) => {
-    let option = document.createElement("option");
-    option.value = subject;
-    if(counter == 0) {
-      option.selected = true;
-    }
-    counter += 1
-    option.innerHTML = subjects[subject].Short;
-    subject_selector.appendChild(option);
-  })
-  current_subject = subject_selector.value;
+    let option = $('<option></option>');
+    option.val(subject);
+    option.prop('selected',counter==0)
+    option.text(subjects[subject].Short)
+    counter += 1;
+    subject_selector.append(option);
+  });
+  current_subject = subject_selector.val();
   load_page();
-  $('html').show()
+  $("html").show();
 }
 
 function refresh_subject() {
-  const subject_input = document.getElementById('subject_selector').value
-  if(subject_input != current_subject) {
-    current_subject = subject_input
-    load_page()
+  const subject_input = $('#subject_selector').val();
+  if (subject_input != current_subject) {
+    current_subject = subject_input;
+    load_page();
   }
 }
 
 function load_page() {
-  $('#grades > tbody').empty()
-  $('#error_message').hide()
+  $("#grades > tbody").empty();
+  $("#error_message").hide();
   let grades_from_subject = get_grades_from_subject(current_subject);
   grades_from_subject.forEach((grade) => {
-    let table_body = $("#grades > tbody")
+    let table_body = $("#grades > tbody");
     if (grade.Grade == null || grade.Grade == NaN) {
-      table_body.append(`<tr><td class="grade_name">${grade.Name}</td><td><input type="number" min="0" max="100" id="${grade.Id}" class="grade_input" placeholder="Not assigned"></td></tr>`)
+      table_body.append(
+        `<tr><td class="grade_name">${grade.Name}</td><td><input type="number" min="0" max="100" id="${grade.Id}" class="grade_input" placeholder="Not assigned"></td></tr>`
+      );
     } else {
-      table_body.append(`<tr><td class="grade_name">${grade.Name}</td><td><input type="number" min="0" max="100" id="${grade.Id}" class="grade_input" placeholder="${grade.Grade}"></td></tr>`)
+      table_body.append(
+        `<tr><td class="grade_name">${grade.Name}</td><td><input type="number" min="0" max="100" id="${grade.Id}" class="grade_input" placeholder="${grade.Grade}"></td></tr>`
+      );
     }
   });
   let average = get_total_average();
   let total_average_text = document.getElementById("total_average");
   total_average_text.innerHTML = `Average: ${average}`;
+  let new_grade_weight_selector = $("#new_grade_weight");
+  const categories_from_subject = get_categories_from_subject(current_subject);
+  let counter = 0;
+  categories_from_subject.forEach((category) => {
+    let option = $("<option></option>");
+    option.val(category);
+    option.text(category * 100);
+    option.prop("selected", counter == 0);
+    counter += 1;
+    new_grade_weight_selector.append(option);
+  });
 }
 
 function get_grades_from_subject(subject_id) {
@@ -124,6 +139,17 @@ function get_grades_from_subject(subject_id) {
     }
   });
   return grades_from_subject;
+}
+function get_categories_from_subject(subject_id) {
+  categories_from_subject = [];
+  const grades_from_subject = get_grades_from_subject(subject_id);
+  grades_from_subject.forEach((grade) => {
+    const weight = categories[grade.Category];
+    if (!categories_from_subject.includes(weight)) {
+      categories_from_subject.push(weight);
+    }
+  });
+  return categories_from_subject;
 }
 
 function add_grade_to_category(grade, id, category_id) {
@@ -142,49 +168,60 @@ function add_grade_to_category(grade, id, category_id) {
 }
 
 function create_new_grade() {
-  let name = $('#new_grade_name').val();
-  let grade = $('#new_grade_value').val();
-  let weight = $('#new_grade_weight').val();
-  if(grade < 0 || grade > 100) {
-    $('#error_message').show()
-    $('#error_message').html('Grade must be between 0 and 100')
-    return
+  let name = $("#new_grade_name").val();
+  let grade = $("#new_grade_value").val();
+  let weight = $("#new_grade_weight").val();
+  if (grade < 0 || grade > 100) {
+    $("#error_message").show();
+    $("#error_message").html("Grade must be between 0 and 100");
+    return;
   }
-  if(weight < 0 || weight > 100) {
-    $('#error_message').show()
-    $('#error_message').html('Weight must be between 0 and 100')
-    return
+  if (weight < 0 || weight > 100) {
+    $("#error_message").show();
+    $("#error_message").html("Weight must be between 0 and 100");
+    return;
   }
-  if(name == '') {
-    name = `Grade ${custom_id_counter + 1}`
+  if (name == "") {
+    name = `Grade ${custom_id_counter + 1}`;
   }
-  grade = Number(grade)
-  weight = Number(weight)
-  $('#error_message').hide()
-  weight = weight / 100
-  for(let category in grade_info) {
-    if(category.Weight = weight) {
-      grade_info[category].Grades.push({Grade: grade, Id: `C${custom_id_counter}`})
-      $('#grades > tbody').append(`<tr><td class="grade_name">${name}</td><td><input type="number" min="0" max="100" id="C${custom_id_counter}" class="grade_input" placeholder="${grade}"></td></tr>`)
-      custom_id_counter += 1
-      break
+  grade = Number(grade);
+  weight = Number(weight);
+  $("#error_message").hide();
+  weight = weight / 100;
+  for (let category in grade_info) {
+    if ((category.Weight = weight)) {
+      grade_info[category].Grades.push({
+        Grade: grade,
+        Id: `C${custom_id_counter}`,
+      });
+      $("#grades > tbody").append(
+        `<tr><td class="grade_name">${name}</td><td><input type="number" min="0" max="100" id="C${custom_id_counter}" class="grade_input" placeholder="${grade}"></td></tr>`
+      );
+      custom_id_counter += 1;
+      break;
     }
   }
 
-  refresh_grades()
+  refresh_grades();
 }
 
 function get_total_average() {
   let average = 0;
-  let max_divisor = 0
+  let max_divisor = 0;
   Object.values(grade_info).forEach((category) => {
-    get_category_average(Object.keys(grade_info).find(key => grade_info[key] === category))
-    if (category.Average != 'Not assigned' && category.Average != null && category.Average != NaN) {
+    get_category_average(
+      Object.keys(grade_info).find((key) => grade_info[key] === category)
+    );
+    if (
+      category.Average != "Not assigned" &&
+      category.Average != null &&
+      category.Average != NaN
+    ) {
       average += category.Average * category.Weight;
-      max_divisor += category.Weight
+      max_divisor += category.Weight;
     }
   });
-  average /= max_divisor
+  average /= max_divisor;
   total_average = average;
   rounded_total_average = Math.round(average);
   return rounded_total_average;
@@ -196,34 +233,36 @@ function get_category_average(category_id) {
   let unassigned_grades = 0;
   grade_info[category_id].Grades.forEach((grade) => {
     counter += 1;
-    if (grade.Grade != NaN && grade.Grade != null && grade.Grade != 'Not assigned') {
+    if (
+      grade.Grade != NaN &&
+      grade.Grade != null &&
+      grade.Grade != "Not assigned"
+    ) {
       average += grade.Grade;
     } else {
       unassigned_grades += 1;
     }
   });
-  if(counter == unassigned_grades) {
-    grade_info[category_id].Average = "Not assigned"
-    return "Not assigned"
-  }
-  else {
-    average /= (grade_info[category_id].Grades.length - unassigned_grades);
-    grade_info[category_id].Average = average
+  if (counter == unassigned_grades) {
+    grade_info[category_id].Average = "Not assigned";
+    return "Not assigned";
+  } else {
+    average /= grade_info[category_id].Grades.length - unassigned_grades;
+    grade_info[category_id].Average = average;
     return average;
   }
-  
 }
 
 async function get_user_subjects() {
-  subjects = await fetch_subjects()
-  grades = await fetch_grades()
-  let user_subjects = {}
+  subjects = await fetch_subjects();
+  grades = await fetch_grades();
+  let user_subjects = {};
   grades.forEach((grade) => {
-    if(!Object.keys(user_subjects).includes(grade.Subject)) {
-      user_subjects[grade.Subject] = subjects[grade.Subject]
+    if (!Object.keys(user_subjects).includes(grade.Subject)) {
+      user_subjects[grade.Subject] = subjects[grade.Subject];
     }
-  })
-  return user_subjects
+  });
+  return user_subjects;
 }
 
 async function fetch_id() {
@@ -327,7 +366,11 @@ async function fetch_grades() {
     });
   });
   await grades.forEach((grade) => {
-    if (grade.Grade == null || grade.Grade.startsWith('/') || Number(grade.Grade) == NaN) {
+    if (
+      grade.Grade == null ||
+      grade.Grade.startsWith("/") ||
+      Number(grade.Grade) == NaN
+    ) {
       grade.Grade = null;
     } else {
       grade.Grade = Number(grade.Grade);

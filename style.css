@@ -1,9 +1,9 @@
 .grades_div {
-  width: 500px;
+  width: 400px;
   float: left;
 }
 .grade_input {
-  width: 50px;
+  width: 100px;
 }
 .grades_table th {
   border: 1px solid black;
