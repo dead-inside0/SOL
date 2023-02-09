@@ -1,0 +1,28 @@
+.grades_div {
+  width: 400px;
+  float: left;
+}
+.grade_input {
+  width: 100px;
+}
+.grades_table th {
+  border: 1px solid black;
+  color: red;
+}
+.grade_input {
+  border: 0px;
+}
+.grade_name {
+  width: 300px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.info_div {
+  width: 500px;
+  float: left;
+}
+.grades_table td {
+  border: 1px solid black;
+}
