@@ -1,6 +1,6 @@
-function Login() {
-    const username = btoa(document.getElementById('username').value)
-    const password = btoa(document.getElementById('password').value)
+function login() {
+    const username = btoa($("#username").val());
+    const password = btoa($("#password").val());
     const token = btoa(username + ':' + password)
     fetch('https://aplikace.skolaonline.cz/SOLWEBApi/api/v1/AuthorizationStatus', {
         headers : {
