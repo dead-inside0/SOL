@@ -19,25 +19,30 @@
         <tbody></tbody>
       </table>
     </div>
-    <div class="info_div">
-      <p id="total_average"></p>
-      <br />
-      <select id="subject_selector"></select
-      ><br />
-      <form id="new_grade_form">
-        <input id="new_grade_name" type="text" placeholder="Grade name" /><br />
+    <div class="info_divs">
+      <div>
+        <p id="total_average"></p>
+      </div><br>
+      <div>
+        <select id="subject_selector"></select>
+      </div><br>
+      <div id="new_grade">
+        <label for="new_grade_name">Name:</label>
+        <input name="new_grade_name" id="new_grade_name" type="text" /><br />
+        <label for="new_grade_value">Grade:</label>
         <input
+          name="new_grade_value"
           id="new_grade_value"
           type="number"
           step="1"
-          placeholder="Grade"
           required
         /><br />
-        <select id="new_grade_weight"></select>
+        <label for="new_grade_weight">Weight:</label>
+        <select name="new_grade_weight" id="new_grade_weight"></select>
         <p id="error_message" class="error message"></p>
         <br />
         <button type="button" onclick="create_new_grade()">Add grade</button>
-      </form>
+      </div>
     </div>
   </body>
 </html>

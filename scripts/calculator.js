@@ -122,7 +122,7 @@ function load_page() {
   categories_from_subject.forEach((category) => {
     let option = $("<option></option>");
     option.val(category);
-    option.text(category * 100);
+    option.text(category * 100 + "%");
     option.prop("selected", counter == 0);
     counter += 1;
     new_grade_weight_selector.append(option);
@@ -174,11 +174,6 @@ function create_new_grade() {
   if (grade < 0 || grade > 100) {
     $("#error_message").show();
     $("#error_message").html("Grade must be between 0 and 100");
-    return;
-  }
-  if (weight < 0 || weight > 100) {
-    $("#error_message").show();
-    $("#error_message").html("Weight must be between 0 and 100");
     return;
   }
   if (name == "") {

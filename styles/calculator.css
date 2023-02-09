@@ -1,25 +1,45 @@
-.grades_div {
-  width: 400px;
-}
-.grade_input {
-  width: 100px;
-}
 .grades_table th {
   border: 1px solid black;
   color: red;
 }
+.grades_table thead th:nth-child(2), .grade_input {
+  width: 100px;
+}
+.grades_table thead th:nth-child(1), .grade_name {
+  width: 400px;
+}
+.grades_div {
+  float:left;
+  margin-right:75px;
+  width:60%;
+}
+.error_message {
+  color:red;
+}
+.info_divs {
+  float:left
+}
+.info_divs div {
+  margin:15px;
+  float:left;
+  width:250px;
+  padding:30px;
+  border:1px solid black;
+  border-radius: 20px;
+  text-align: center;
+  background-color: lightgray;
+}
+#total_average {
+  margin:0px;
+}
 .grade_input {
-  border: 0px;
+  border: none;
+  outline: none;
 }
 .grade_name {
-  width: 300px;
-  text-overflow: ellipsis;
+  width:400px;
   overflow: hidden;
   white-space: nowrap;
-}
-
-.info_div {
-  width: 500px;
 }
 .grades_table td {
   border: 1px solid black;
