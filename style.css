@@ -18,6 +18,51 @@
   overflow: hidden;
   white-space: nowrap;
 }
+.login-div {
+  display:flex;
+  justify-content: center;
+  margin-top:150px;
+}
+
+.login-form {
+  text-align: center;
+}
+body {
+  background-color: lightgray;
+}
+h1 {
+  text-align: center;
+  font-size: 72px;
+  color: rgb(83, 83, 255);
+  margin-top: 50px;
+}
+.login-text-input {
+  border: 2px solid rgb(83, 83, 255);
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 16px;
+  width:300px;
+  margin-bottom: 10px;
+}
+.login-text-input.username {
+  margin-bottom: 10px;
+}
+.login-btn {
+  background-color: rgb(83, 83, 255);
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+.login-btn:hover {
+  background-color: rgb(55, 55, 255);
+}
 
 .info_div {
   width: 500px;
