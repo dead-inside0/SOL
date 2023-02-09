@@ -1,27 +1,7 @@
-.grades_div {
-  width: 400px;
-  float: left;
-}
-.grade_input {
-  width: 100px;
-}
-.grades_table th {
-  border: 1px solid black;
-  color: red;
-}
-.grade_input {
-  border: 0px;
-}
-.grade_name {
-  width: 300px;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-}
 .login-div {
-  display:flex;
+  display: flex;
   justify-content: center;
-  margin-top:150px;
+  margin-top: 150px;
 }
 
 .login-form {
@@ -41,7 +21,7 @@ h1 {
   border-radius: 5px;
   padding: 10px;
   font-size: 16px;
-  width:300px;
+  width: 300px;
   margin-bottom: 10px;
 }
 .login-text-input.username {
@@ -62,12 +42,4 @@ h1 {
 }
 .login-btn:hover {
   background-color: rgb(55, 55, 255);
-}
-
-.info_div {
-  width: 500px;
-  float: left;
-}
-.grades_table td {
-  border: 1px solid black;
 }
