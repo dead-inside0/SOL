@@ -1,6 +1,5 @@
 .grades_div {
   width: 400px;
-  float: left;
 }
 .grade_input {
   width: 100px;
@@ -21,7 +20,6 @@
 
 .info_div {
   width: 500px;
-  float: left;
 }
 .grades_table td {
   border: 1px solid black;
