@@ -1,46 +1,66 @@
 .grades_table th {
-  border: 1px solid black;
   color: red;
 }
-.grades_table thead th:nth-child(2), .grade_input {
-  width: 100px;
+.grades_table thead{
+  border: 1px solid black;
 }
-.grades_table thead th:nth-child(1), .grade_name {
-  width: 400px;
+body {
+  background-color: lightgray;
+}
+.content {
+  display: flex;
+  justify-content: center;
 }
 .grades_div {
   float:left;
-  margin-right:75px;
-  width:60%;
+  margin-right:10px;
+  padding:20px;
+  border-radius: 20px;  
+  border-radius: 50px;
+  background: #e0e0e0;
+  box-shadow: 20px 20px 60px #bebebe,-20px -20px 60px #ffffff;
 }
 .error_message {
   color:red;
 }
 .info_divs {
-  float:left
+  float:left;
+  margin-left:none;
+  margin-right:none;
+}
+.total_average {
+  font-family: monospace;
+  font-size: 40px;
 }
 .info_divs div {
   margin:15px;
   float:left;
   width:250px;
   padding:30px;
-  border:1px solid black;
-  border-radius: 20px;
   text-align: center;
-  background-color: lightgray;
+  border-radius: 50px;
+  background: #e0e0e0;
+  box-shadow:  20px 20px 60px #bebebe,-20px -20px 60px #ffffff;
 }
 #total_average {
-  margin:0px;
+  margin:none;
 }
 .grade_input {
   border: none;
   outline: none;
+  background-color: whitesmoke;
+  border-radius: 20px;
+  width: 100px;
 }
 .grade_name {
   width:400px;
   overflow: hidden;
   white-space: nowrap;
+  border-radius: 20px;
+  width: 400px;
 }
 .grades_table td {
   border: 1px solid black;
+  border-radius: 5px;
+  background-color: whitesmoke;
 }
