@@ -8,7 +8,7 @@ function login() {
       headers: {
         base64: "1",
         Authorization: "Basic " + token,
-      },
+      }
     }
   )
     .then((response) => response.json())
