@@ -18,9 +18,9 @@ let info,
 date = new Date();
 date = date.toISOString();
 
-init_data().then(() => initial_load_page());
+init_data().then(() => {initial_load_page();refresh_on_timeout()});
 
-refresh_on_timeout();
+
 
 function refresh_on_timeout() {
   setTimeout(() => {
@@ -179,18 +179,12 @@ function create_new_grade() {
   let name = $("#new_grade_name").val();
   let grade = $("#new_grade_value").val();
   let weight = $("#new_grade_weight").val();
-  if (grade < 0 || grade > 100) {
-    $("#error_message").show();
-    $("#error_message").html("Grade must be between 0 and 100");
-    return;
-  }
   if (name == "") {
     name = `Grade ${custom_id_counter + 1}`;
   }
   grade = Number(grade);
   weight = Number(weight);
   $("#error_message").hide();
-  weight = weight / 100;
   for (let category in grade_info) {
     if ((category.Weight = weight)) {
       grade_info[category].Grades.push({
