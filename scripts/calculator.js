@@ -74,13 +74,13 @@ function change_grade_by_id(id, new_grade) {
 
 function initial_load_page() {
   $("html").hide();
-  let subject_selector = $('#subject_selector');
+  let subject_selector = $("#subject_selector");
   let counter = 0;
   Object.keys(subjects).forEach((subject) => {
-    let option = $('<option></option>');
+    let option = $("<option></option>");
     option.val(subject);
-    option.prop('selected',counter==0)
-    option.text(subjects[subject].Short)
+    option.prop("selected", counter == 0);
+    option.text(subjects[subject].Short);
     counter += 1;
     subject_selector.append(option);
   });
@@ -90,7 +90,7 @@ function initial_load_page() {
 }
 
 function refresh_subject() {
-  const subject_input = $('#subject_selector').val();
+  const subject_input = $("#subject_selector").val();
   if (subject_input != current_subject) {
     current_subject = subject_input;
     load_page();
@@ -105,11 +105,19 @@ function load_page() {
     let table_body = $("#grades > tbody");
     if (grade.Grade == null || grade.Grade == NaN) {
       table_body.append(
-        `<tr><td class="grade_name">${grade.Name}</td><td><input type="number" min="0" max="100" id="${grade.Id}" class="grade_input" placeholder="Not assigned"></td></tr>`
+        `<tr><td class="grade_name">${grade.Name}</td><td>${
+          grade_info[grade.Category].Weight * 100
+        }%</td><td><input type="number" min="0" max="100" id="${
+          grade.Id
+        }" class="grade_input" placeholder="Not assigned"></td></tr>`
       );
     } else {
       table_body.append(
-        `<tr><td class="grade_name">${grade.Name}</td><td><input type="number" min="0" max="100" id="${grade.Id}" class="grade_input" placeholder="${grade.Grade}"></td></tr>`
+        `<tr><td class="grade_name">${grade.Name}</td><td>${
+          grade_info[grade.Category].Weight * 100
+        }%</td><td><input type="number" min="0" max="100" id="${
+          grade.Id
+        }" class="grade_input" placeholder="${grade.Grade}"></td></tr>`
       );
     }
   });
@@ -190,7 +198,9 @@ function create_new_grade() {
         Id: `C${custom_id_counter}`,
       });
       $("#grades > tbody").append(
-        `<tr><td class="grade_name">${name}</td><td><input type="number" min="0" max="100" id="C${custom_id_counter}" class="grade_input" placeholder="${grade}"></td></tr>`
+        `<tr><td class="grade_name">${name}</td><td>${
+          weight * 100
+        }%</td><td><input type="number" min="0" max="100" id="C${custom_id_counter}" class="grade_input" placeholder="${grade}"></td></tr>`
       );
       custom_id_counter += 1;
       break;
@@ -198,6 +208,13 @@ function create_new_grade() {
   }
 
   refresh_grades();
+}
+
+function parseISOString(s) {
+  var b = s.split(/\D+/);
+  return new Date(
+    Date.UTC(b[0], --b[1], b[2], b[3], b[4], b[5], b[6])
+  );
 }
 
 function get_total_average() {
@@ -338,9 +355,29 @@ async function fetch_subjects() {
   return subs;
 }
 
-async function fetch_grades() {
+async function get_start_of_semester() {
   let res = await fetch(
-    `https://aplikace.skolaonline.cz/SOLWebApi/api/v1/VypisHodnoceniStudent?studentId=${id}&datumDo=${date}`,
+    "https://aplikace.skolaonline.cz/SOLWebApi/api/v1/ObdobiRoku",
+    {
+      headers: {
+        base64: "1",
+        Authorization: "Basic " + token,
+      }
+    }
+  );
+  res = await res.json();
+  for(let semester of res.Data) {
+    const end_semester = new Date(semester.DATUM_DO)
+    if(new Date(semester.DATUM_DO) > parseISOString(date)) {
+      return semester.DATUM_OD;
+    }
+  }
+}
+
+async function fetch_grades() {
+  let start_of_semester = await get_start_of_semester();
+  let res = await fetch(
+    `https://aplikace.skolaonline.cz/SOLWebApi/api/v1/VypisHodnoceniStudent?studentId=${id}&datumOd=${start_of_semester}&datumDo=${date}`,
     {
       headers: {
         base64: "1",
