@@ -41,12 +41,12 @@ async function init_data() {
 function refresh_grades() {
   const table = $("#grades > tbody");
   table.find("tr").each((i, row) => {
-    const value = $(row).find("td:eq(1)").find("input").val();
+    const value = $(row).find("td:eq(2)").find("input").val();
     const placeholder = $(row)
-      .find("td:eq(1)")
+      .find("td:eq(2)")
       .find("input")
       .attr("placeholder");
-    const id = $(row).find("td:eq(1)").find("input").attr("id");
+    const id = $(row).find("td:eq(2)").find("input").attr("id");
     if (value != "") {
       change_grade_by_id(id, value);
     } else {
