@@ -6,6 +6,10 @@
 
 .login-form {
   text-align: center;
+  padding:20px;
+  border-radius: 20px;
+  background: #e0e0e0;
+  box-shadow:  20px 20px 60px #bebebe,-20px -20px 60px #ffffff;
 }
 body {
   background-color: lightgray;
@@ -23,14 +27,16 @@ h1 {
   font-size: 16px;
   width: 300px;
   margin-bottom: 10px;
+  outline:none;
 }
 .login-text-input.username {
   margin-bottom: 10px;
 }
 .login-btn {
-  background-color: rgb(83, 83, 255);
+  background-color: #f3f7fe;
   border: none;
-  color: white;
+  color: #3b82f6;
+  transition: .3s;
   padding: 15px 32px;
   text-align: center;
   text-decoration: none;
@@ -38,8 +44,10 @@ h1 {
   font-size: 16px;
   margin: 4px 2px;
   cursor: pointer;
-  border-radius: 5px;
+  border-radius: 8px;
 }
 .login-btn:hover {
-  background-color: rgb(55, 55, 255);
+  background-color: rgb(83, 83, 255);
+  box-shadow: 0 0 0 7px rgba(83, 83, 255, 0.356);
+  color: #fff;
 }
