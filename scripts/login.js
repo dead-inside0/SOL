@@ -1,5 +1,5 @@
 function login() {
-  const username = btoa($("#username").val());
+  const username = btoa(to_binary($("#username").val()));
   const password = btoa($("#password").val());
   const token = btoa(username + ":" + password);
   fetch(
@@ -21,4 +21,17 @@ function login() {
         alert("Incorrect username or password.");
       }
     });
+}
+function to_binary(string) {
+  const codeUnits = Uint16Array.from(
+    { length: string.length },
+    (element, index) => string.charCodeAt(index)
+  );
+  const charCodes = new Uint8Array(codeUnits.buffer);
+
+  let result = "";
+  charCodes.forEach((char) => {
+    result += String.fromCharCode(char);
+  });
+  return result;
 }
