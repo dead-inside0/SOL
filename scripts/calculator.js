@@ -13,14 +13,16 @@ let info,
   total_average = 0,
   rounded_total_average,
   current_subject,
-  custom_id_counter = 0;
+  custom_id_counter = 0,
+  assigned_colors;
 
 date = new Date();
 date = date.toISOString();
 
-init_data().then(() => {initial_load_page();refresh_on_timeout()});
-
-
+init_data().then(() => {
+  initial_load_page();
+  refresh_on_timeout();
+});
 
 function refresh_on_timeout() {
   setTimeout(() => {
@@ -48,7 +50,11 @@ function refresh_grades() {
       .attr("placeholder");
     const id = $(row).find("td:eq(2)").find("input").attr("id");
     if (value != "") {
-      change_grade_by_id(id, value);
+      if (parseInt(value) > 100) {
+        change_grade_by_id(id, "100");
+      } else {
+        change_grade_by_id(id, value);
+      }
     } else {
       change_grade_by_id(id, placeholder);
     }
@@ -85,6 +91,20 @@ function initial_load_page() {
     subject_selector.append(option);
   });
   current_subject = subject_selector.val();
+  let new_grade_weight_selector = $("#new_grade_weight");
+  counter = 0;
+  new_grade_weight_selector.empty();
+  for (let category of Object.values(categories)) {
+    if (Object.values(categories).indexOf(category) != counter) {
+      continue;
+    }
+    let option = $("<option></option>");
+    option.val(category);
+    option.text(category * 100 + "%");
+    option.prop("selected", counter == 0);
+    counter += 1;
+    new_grade_weight_selector.append(option);
+  }
   load_page();
   $("html").show();
 }
@@ -101,11 +121,14 @@ function load_page() {
   $("#grades > tbody").empty();
   $("#error_message").hide();
   let grades_from_subject = get_grades_from_subject(current_subject);
+  assign_category_colors();
   grades_from_subject.forEach((grade) => {
     let table_body = $("#grades > tbody");
     if (grade.Grade == null || grade.Grade == NaN) {
       table_body.append(
-        `<tr><td class="grade_name">${grade.Name}</td><td>${
+        `<tr><td class="grade_name">${grade.Name}</td><td class="${
+          assigned_colors[grade.Category]
+        }">${
           grade_info[grade.Category].Weight * 100
         }%</td><td><input type="number" min="0" max="100" id="${
           grade.Id
@@ -113,7 +136,9 @@ function load_page() {
       );
     } else {
       table_body.append(
-        `<tr><td class="grade_name">${grade.Name}</td><td>${
+        `<tr><td class="grade_name">${grade.Name}</td><td class="${
+          assigned_colors[grade.Category]
+        }">${
           grade_info[grade.Category].Weight * 100
         }%</td><td><input type="number" min="0" max="100" id="${
           grade.Id
@@ -124,17 +149,6 @@ function load_page() {
   let average = get_total_average();
   let total_average_text = document.getElementById("total_average");
   total_average_text.innerHTML = `Average: ${average}`;
-  let new_grade_weight_selector = $("#new_grade_weight");
-  const categories_from_subject = get_categories_from_subject(current_subject);
-  let counter = 0;
-  categories_from_subject.forEach((category) => {
-    let option = $("<option></option>");
-    option.val(category);
-    option.text(category * 100 + "%");
-    option.prop("selected", counter == 0);
-    counter += 1;
-    new_grade_weight_selector.append(option);
-  });
 }
 
 function get_grades_from_subject(subject_id) {
@@ -158,6 +172,13 @@ function get_categories_from_subject(subject_id) {
     }
   });
   return categories_from_subject;
+}
+
+function assign_category_colors() {
+  assigned_colors = {};
+  for (let i = 0; i < Object.keys(categories).length; i++) {
+    assigned_colors[Object.keys(categories)[i]] = `category-${i + 1}`;
+  }
 }
 
 function add_grade_to_category(grade, id, category_id) {
@@ -206,9 +227,7 @@ function create_new_grade() {
 
 function parseISOString(s) {
   var b = s.split(/\D+/);
-  return new Date(
-    Date.UTC(b[0], --b[1], b[2], b[3], b[4], b[5], b[6])
-  );
+  return new Date(Date.UTC(b[0], --b[1], b[2], b[3], b[4], b[5], b[6]));
 }
 
 function get_total_average() {
@@ -356,13 +375,13 @@ async function get_start_of_semester() {
       headers: {
         base64: "1",
         Authorization: "Basic " + token,
-      }
+      },
     }
   );
   res = await res.json();
-  for(let semester of res.Data) {
-    const end_semester = new Date(semester.DATUM_DO)
-    if(new Date(semester.DATUM_DO) > parseISOString(date)) {
+  for (let semester of res.Data) {
+    const end_semester = new Date(semester.DATUM_DO);
+    if (new Date(semester.DATUM_DO) > parseISOString(date)) {
       return semester.DATUM_OD;
     }
   }
