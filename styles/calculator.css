@@ -4,6 +4,17 @@
 .grades_table thead{
   border: 1px solid black;
 }
+.grades_table tbody tr td:nth-of-type(1) {
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+.grades_table tbody tr td:nth-of-type(3) {
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+.grades_table td {
+  padding:5px;
+}
 body {
   background-color: lightgray;
 }
@@ -18,7 +29,7 @@ td{
   float:left;
   margin-right:10px;
   padding:20px;
-  border-radius: 20px;  
+  border-radius: 20px;
   border-radius: 50px;
   background: #e0e0e0;
   box-shadow: 20px 20px 60px #bebebe,-20px -20px 60px #ffffff;
@@ -74,29 +85,14 @@ html {
   width:400px;
   overflow: hidden;
   white-space: nowrap;
-  border-radius: 20px;
   width: 400px;
 }
 .grades_table td {
-  border: 1px solid black;
-  border-radius: 5px;
   background-color: whitesmoke;
 }
-.category-1 {
-  background-color: #540B0E;
+.grade-1 {
+  background-color: lightgreen;
 }
-.category-2 {
-  background-color:#E09F3E;
-}
-.category-3 {
-  background-color:#FFF3B0;
-}
-.category-4 {
-  background-color:#335C67;
-}
-.category-5 {
-  background-color:#0B5345;
-}
-.category-6 {
-  background-color:#37d09d;
+.grade-2 {
+  background-color: rgb(249, 255, 70);
 }
