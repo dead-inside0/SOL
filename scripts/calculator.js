@@ -93,10 +93,13 @@ function initial_load_page() {
   current_subject = subject_selector.val();
   let new_grade_weight_selector = $("#new_grade_weight");
   counter = 0;
+  let categories_from_subject = get_categories_from_subject(current_subject);
   new_grade_weight_selector.empty();
   for (let category of Object.values(categories)) {
-    if (Object.values(categories).indexOf(category) != counter) {
-      continue;
+    if(Object.values(categories).includes(category)) {
+      if (!categories[category] == Object.keys(categories)[Object.values(categories).indexOf(category)]) {
+        continue;
+      }
     }
     let option = $("<option></option>");
     option.val(category);
@@ -121,14 +124,11 @@ function load_page() {
   $("#grades > tbody").empty();
   $("#error_message").hide();
   let grades_from_subject = get_grades_from_subject(current_subject);
-  assign_category_colors();
   grades_from_subject.forEach((grade) => {
     let table_body = $("#grades > tbody");
     if (grade.Grade == null || grade.Grade == NaN) {
       table_body.append(
-        `<tr><td class="grade_name">${grade.Name}</td><td class="${
-          assigned_colors[grade.Category]
-        }">${
+        `<tr><td class="grade_name">${grade.Name}</td><td>${
           grade_info[grade.Category].Weight * 100
         }%</td><td><input type="number" min="0" max="100" id="${
           grade.Id
@@ -136,9 +136,7 @@ function load_page() {
       );
     } else {
       table_body.append(
-        `<tr><td class="grade_name">${grade.Name}</td><td class="${
-          assigned_colors[grade.Category]
-        }">${
+        `<tr><td class="grade_name">${grade.Name}</td><td>${
           grade_info[grade.Category].Weight * 100
         }%</td><td><input type="number" min="0" max="100" id="${
           grade.Id
@@ -163,22 +161,15 @@ function get_grades_from_subject(subject_id) {
   return grades_from_subject;
 }
 function get_categories_from_subject(subject_id) {
-  categories_from_subject = [];
-  const grades_from_subject = get_grades_from_subject(subject_id);
+  categories_from_subject = {};
+  let grades_from_subject = get_grades_from_subject(subject_id);
   grades_from_subject.forEach((grade) => {
     const weight = categories[grade.Category];
-    if (!categories_from_subject.includes(weight)) {
-      categories_from_subject.push(weight);
+    if (!Object.keys(categories_from_subject).includes(weight)) {
+      categories_from_subject[weight] = grade.Category;
     }
   });
   return categories_from_subject;
-}
-
-function assign_category_colors() {
-  assigned_colors = {};
-  for (let i = 0; i < Object.keys(categories).length; i++) {
-    assigned_colors[Object.keys(categories)[i]] = `category-${i + 1}`;
-  }
 }
 
 function add_grade_to_category(grade, id, category_id) {
@@ -206,8 +197,10 @@ function create_new_grade() {
   grade = Number(grade);
   weight = Number(weight);
   $("#error_message").hide();
+  let category_found = false;
   for (let category in grade_info) {
-    if ((category.Weight = weight)) {
+    if (grade_info[category].Weight == weight) {
+      category_found = true;
       grade_info[category].Grades.push({
         Grade: grade,
         Id: `C${custom_id_counter}`,
@@ -220,6 +213,23 @@ function create_new_grade() {
       custom_id_counter += 1;
       break;
     }
+  }
+  if(!category_found)  {
+    let categories_from_subject = get_categories_from_subject(current_subject);
+    grade_info[categories_from_subject[weight]] = {
+      Weight: weight,
+      Grades: []
+    }
+    grade_info[categories_from_subject[weight]].Grades.push({
+      Grade: grade,
+      Id: `C${custom_id_counter}`
+    })
+    grade_info[categories_from_subject[weight]].Average = weight;
+    $("#grades > tbody").append(
+      `<tr><td class="grade_name">${name}</td><td>${
+        weight * 100
+      }%</td><td><input type="number" min="0" max="100" id="C${custom_id_counter}" class="grade_input" placeholder="${grade}"></td></tr>`
+    );
   }
 
   refresh_grades();
