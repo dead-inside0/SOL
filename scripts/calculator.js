@@ -95,12 +95,12 @@ function initial_load_page() {
   counter = 0;
   let categories_from_subject = get_categories_from_subject(current_subject);
   new_grade_weight_selector.empty();
+  let ignored_categories = []
   for (let category of Object.values(categories)) {
-    if(Object.values(categories).includes(category)) {
-      if (!categories[category] == Object.keys(categories)[Object.values(categories).indexOf(category)]) {
-        continue;
-      }
+    if (Object.values(categories_from_subject).includes(category) || ignored_categories.includes(category)) {
+      continue;
     }
+    ignored_categories.push(category)
     let option = $("<option></option>");
     option.val(category);
     option.text(category * 100 + "%");
