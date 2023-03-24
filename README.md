@@ -1,1 +1,1 @@
-# SOL
+# Skola OnLine Grade Calculator
