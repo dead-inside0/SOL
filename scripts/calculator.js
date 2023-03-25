@@ -95,12 +95,12 @@ function initial_load_page() {
   counter = 0;
   let categories_from_subject = get_categories_from_subject(current_subject);
   new_grade_weight_selector.empty();
+  let ignored_categories = []
   for (let category of Object.values(categories)) {
-    if(Object.values(categories).includes(category)) {
-      if (!categories[category] == Object.keys(categories)[Object.values(categories).indexOf(category)]) {
-        continue;
-      }
+    if (Object.values(categories_from_subject).includes(category) || ignored_categories.includes(category)) {
+      continue;
     }
+    ignored_categories.push(category)
     let option = $("<option></option>");
     option.val(category);
     option.text(category * 100 + "%");
@@ -191,8 +191,9 @@ function create_new_grade() {
   let name = $("#new_grade_name").val();
   let grade = $("#new_grade_value").val();
   let weight = $("#new_grade_weight").val();
+  custom_id_counter+=1;
   if (name == "") {
-    name = `Grade ${custom_id_counter + 1}`;
+    name = `Grade ${custom_id_counter}`;
   }
   grade = Number(grade);
   weight = Number(weight);
@@ -210,28 +211,29 @@ function create_new_grade() {
           weight * 100
         }%</td><td><input type="number" min="0" max="100" id="C${custom_id_counter}" class="grade_input" placeholder="${grade}"></td></tr>`
       );
-      custom_id_counter += 1;
+      custom_id_counter +=1;
       break;
     }
   }
   if(!category_found)  {
-    let categories_from_subject = get_categories_from_subject(current_subject);
-    grade_info[categories_from_subject[weight]] = {
+    custom_id_counter+=1;
+    grade_info[`C${custom_id_counter}`] = {
       Weight: weight,
       Grades: []
     }
-    grade_info[categories_from_subject[weight]].Grades.push({
+    grade_info[`C${custom_id_counter}`].Grades.push({
       Grade: grade,
       Id: `C${custom_id_counter}`
     })
-    grade_info[categories_from_subject[weight]].Average = weight;
+    grade_info[`C${custom_id_counter}`].Average = weight;
     $("#grades > tbody").append(
       `<tr><td class="grade_name">${name}</td><td>${
         weight * 100
       }%</td><td><input type="number" min="0" max="100" id="C${custom_id_counter}" class="grade_input" placeholder="${grade}"></td></tr>`
     );
+    custom_id_counter+=1;
   }
-
+  console.log(grade_info);
   refresh_grades();
 }
 
