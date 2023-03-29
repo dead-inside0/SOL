@@ -11,42 +11,44 @@
   </head>
   <body>
     <div class="content">
-    <div class="grades_div">
-      <table id="grades" class="grades_table">
-        <thead>
-          <th>Name</th>
-          <th>Weight</th>
-          <th>Grade</th>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-    <div class="info_divs">
-      <div class="subject_div">
-        <select id="subject_selector"></select>
-      </div><br>
-      <div class="info_div">
-        <p class="total_average"id="total_average"></p>
-      </div><br>
-      <div id="new_grade" class="info_div new_grade_div">
-        <p>New grade</p>
-        <label for="new_grade_name">Name:</label>
-        <input name="new_grade_name" id="new_grade_name" type="text" /><br />
-        <label for="new_grade_value">Grade:</label>
-        <input
-          name="new_grade_value"
-          id="new_grade_value"
-          type="number"
-          step="1"
-          required
-        /><br />
-        <label for="new_grade_weight">Weight:</label>
-        <select name="new_grade_weight" id="new_grade_weight"></select>
-        <p id="error_message" class="error message"></p>
-        <br />
-        <button type="button" onclick="create_new_grade()">Add grade</button>
+      <div class="grades_div">
+        <table id="grades" class="grades_table">
+          <thead>
+            <th>Name</th>
+            <th>Weight</th>
+            <th>Grade</th>
+          </thead>
+          <tbody></tbody>
+        </table>
       </div>
-    </div>
+      <div class="info_divs">
+        <div class="subject_div">
+          <select id="subject_selector"></select>
+        </div>
+        <br />
+        <div class="info_div">
+          <p class="total_average" id="total_average"></p>
+        </div>
+        <br />
+        <div id="new_grade" class="info_div new_grade_div">
+          <p>New grade</p>
+          <label for="new_grade_name">Name:</label>
+          <input name="new_grade_name" id="new_grade_name" type="text" /><br />
+          <label for="new_grade_value">Grade:</label>
+          <input
+            name="new_grade_value"
+            id="new_grade_value"
+            type="number"
+            step="1"
+            required
+          /><br />
+          <label for="new_grade_weight">Weight:</label>
+          <select name="new_grade_weight" id="new_grade_weight"></select>
+          <p id="error_message" class="error message"></p>
+          <br />
+          <button type="button" onclick="create_new_grade()">Add grade</button>
+        </div>
+      </div>
     </div>
   </body>
 </html>
